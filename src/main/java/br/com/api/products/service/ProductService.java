@@ -21,7 +21,7 @@ public class ProductService {
         return product.findAll();
     }
 
-    public ResponseEntity<?> create(ProductModel productModel){
+    public ResponseEntity<?> createOrUpdate(ProductModel productModel, String action){
         if(productModel.getName().equals("")){
             responseModel.setMessage("Invalid name");
             return new ResponseEntity<ResponseModel>(responseModel, HttpStatus.BAD_REQUEST);
@@ -29,8 +29,19 @@ public class ProductService {
             responseModel.setMessage("Invalid quantity");
             return new ResponseEntity<ResponseModel>(responseModel, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<ProductModel>(product.save(productModel), HttpStatus.CREATED);
+            if (action == "CREATE"){
+                return new ResponseEntity<ProductModel>(product.save(productModel), HttpStatus.CREATED);
+            }else {
+                return new ResponseEntity<ProductModel>(product.save(productModel), HttpStatus.OK);
+            }
         }
+    }
+
+    public ResponseEntity<ResponseModel> remove(long id){
+        product.deleteById(id);
+
+        responseModel.setMessage("Product deleted");
+        return new ResponseEntity<ResponseModel>(responseModel, HttpStatus.OK);
     }
 
 }
